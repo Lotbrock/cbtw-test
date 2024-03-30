@@ -44,7 +44,15 @@ namespace Data.Repositories
 
         public virtual async Task<T?> GetById(Guid guid)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _dbSet.FindAsync(guid);
+
+            }catch (Exception ex)
+            {
+                _logger.LogError(ex, "Repo: Function Error ", typeof(GenericRepository<T>));
+                throw;
+            }
         }
 
         public virtual Task<bool> Update(T entity)
