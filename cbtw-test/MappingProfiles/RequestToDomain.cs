@@ -18,6 +18,17 @@ namespace cbtw_test.MappingProfiles
                 des => des.UpdateDate,
                 opt => opt.MapFrom(src => DateTime.Now)
                 );
+            CreateMap<CreateProductRequest, Product>()
+                .ForMember(
+                des => des.Status,
+                opt => opt.MapFrom(src => 1)
+                );
+            CreateMap<UpdateProductRequest, Product>()
+                .ForMember(
+                des => des.UpdateDate,
+                opt => opt.MapFrom(src => DateTime.Now)
+                );
+
         }
     }
 }
