@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DTOs.Responses
 {
-    public class ReceiptResponse
+    public class PurchaseResponse
     {
         public string FullName { get; set; }
 
@@ -14,6 +14,7 @@ namespace Entities.DTOs.Responses
         public int PhoneNumber { get; set; }
         public int ProductsAmount { get; set; }
         public double Total { get; set; }
+
 
     }
 }
