@@ -10,9 +10,17 @@ using System.Threading.Tasks;
 
 namespace Data.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly AppDbContext _context;
+
+        public IClientRespository Clients { get; }
+
+        public IProductReceiptRepository ProductsReceipts { get; }
+
+        public IProductRepository Products { get; }
+
+        public IReceiptRepository Receipts { get; }
 
         public UnitOfWork(AppDbContext context, ILoggerFactory loggerFactory) 
         {
@@ -23,20 +31,16 @@ namespace Data.Repositories
             Products = new ProductRepository(context, logger);
             Receipts =  new ReceiptRepository(context, logger);
         }
-
-        public IClientRespository Clients { get; }
-
-        public IProductReceiptRepository ProductsReceipts { get; }
-
-        public IProductRepository Products { get; }
-
-        public IReceiptRepository Receipts { get; }
-
         public async Task<bool> CompleteAsync()
         {
-            await _context.SaveChangesAsync();
+           var result = await _context.SaveChangesAsync();
 
-            return true;
+            return result > 0;
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
     }
 }
