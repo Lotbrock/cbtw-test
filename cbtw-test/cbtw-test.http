@@ -1,0 +1,6 @@
+@cbtw_test_HostAddress = http://localhost:5163
+
+GET {{cbtw_test_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
