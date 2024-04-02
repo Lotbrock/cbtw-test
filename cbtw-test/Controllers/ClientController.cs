@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
+using cbtw_test.Command;
+using cbtw_test.Queries;
 using Data.Repositories.Interfaces;
 using Entities.DbSet;
 using Entities.DTOs.Requests;
 using Entities.DTOs.Responses;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cbtw_test.Controllers
 {
     public class ClientController : BaseController
     {
-        public ClientController(IUnitOfWork uow, IMapper mapper) : base(uow, mapper)
+        public ClientController(IUnitOfWork uow, IMapper mapper, IMediator mediator) : base(uow, mapper, mediator)
         {
         }
 
@@ -17,7 +20,8 @@ namespace cbtw_test.Controllers
         [Route("{clientId:guid}")]
         public async Task<ActionResult> GetById(Guid clientId)
         {
-            var client = await _uow.Clients.GetById(clientId);
+            
+            var client = await _mediator.Send(new GetClientQuery(clientId));
 
             if (client == null)
                 return NotFound();
@@ -29,7 +33,7 @@ namespace cbtw_test.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var clients = await _uow.Clients.GetAll();
+            var clients = await _mediator.Send(new GetAllClientsQuery());
 
             if (clients == null || !clients.Any())
                 return NotFound();
@@ -43,10 +47,7 @@ namespace cbtw_test.Controllers
             if(!ModelState.IsValid)
                 return BadRequest();
 
-            var client = _mapper.Map<Client>(req);
-
-            await _uow.Clients.Add(client);
-            await _uow.CompleteAsync();
+            var client = await _mediator.Send(new CreateClientCommand(req));
            
             return CreatedAtAction(nameof(GetById), new {clientId = client.Id }, client);
 
@@ -59,8 +60,7 @@ namespace cbtw_test.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var response = await _uow.Clients.Delete(clientId);
-            await _uow.CompleteAsync();
+            var response = await _mediator.Send(new DeleteClientCommand(clientId));
 
             return response ? Ok() : NotFound();
 
@@ -72,13 +72,9 @@ namespace cbtw_test.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var entity = _mapper.Map<Client>(req);
+            var result = await _mediator.Send(new UpdateClientCommand(req));
 
-           await _uow.Clients.Update(entity);
-            await _uow.CompleteAsync();
-
-
-            return NoContent();
+            return result ? Ok() : BadRequest();
         }
 
 

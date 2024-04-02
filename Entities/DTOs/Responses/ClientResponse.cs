@@ -16,6 +16,6 @@ namespace Entities.DTOs.Responses
         public string LastName { get; set; }
         public int PhoneNumber { get; set; }
 
-        public virtual ICollection<Receipt> Receipts { get; set; }
+        public virtual ICollection<ReceiptResponse> Receipts { get; set; }
     }
 }

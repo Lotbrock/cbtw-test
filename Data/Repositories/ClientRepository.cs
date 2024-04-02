@@ -18,11 +18,18 @@ namespace Data.Repositories
         {
         }
 
+        public override async Task<Client?> GetById(Guid guid)
+        {
+            var client = await _dbSet.Include(c => c.Receipts).FirstOrDefaultAsync(d => d.Id.Equals(guid));
+            return client;
+        }
+
         public override async Task<IEnumerable<Client>> GetAll()
         {
             try 
             {
                 return await _dbSet.Where(d => d.Status == 1)
+                    .Include(i => i.Receipts)
                     .AsNoTracking()
                     .AsSplitQuery()
                     .OrderBy(d => d.AddDate)

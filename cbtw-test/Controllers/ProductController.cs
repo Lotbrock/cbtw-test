@@ -2,13 +2,14 @@
 using Data.Repositories.Interfaces;
 using Entities.DbSet;
 using Entities.DTOs.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cbtw_test.Controllers
 {
     public class ProductController : BaseController
     {
-        public ProductController(IUnitOfWork uow, IMapper mapper) : base(uow, mapper)
+        public ProductController(IUnitOfWork uow, IMapper mapper, IMediator mediator) : base(uow, mapper, mediator)
         {
         }
 

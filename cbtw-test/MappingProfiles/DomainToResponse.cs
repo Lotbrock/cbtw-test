@@ -32,6 +32,8 @@ namespace cbtw_test.MappingProfiles
                 des => des.Total,
                 opt => opt.MapFrom(src => src.Total)
                 );
+
+            CreateMap<Receipt, ReceiptResponse>();
         }
     }
 }
