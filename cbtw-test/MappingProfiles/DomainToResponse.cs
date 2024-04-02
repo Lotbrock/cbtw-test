@@ -34,6 +34,8 @@ namespace cbtw_test.MappingProfiles
                 );
 
             CreateMap<Receipt, ReceiptResponse>();
+
+            CreateMap<Product, ProductResponse>();
         }
     }
 }

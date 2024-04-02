@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using cbtw_test.Command;
+using cbtw_test.Queries;
 using Data.Repositories.Interfaces;
 using Entities.DbSet;
 using Entities.DTOs.Requests;
@@ -17,7 +19,7 @@ namespace cbtw_test.Controllers
         [Route("{id:guid}")]
         public async Task<ActionResult> GetById(Guid id)
         {
-            var product = await _uow.Products.GetById(id);
+            var product = await _mediator.Send(new GetProductQuery(id));
 
             if (product == null)
                 return NotFound();
@@ -29,7 +31,7 @@ namespace cbtw_test.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var products = await _uow.Products.GetAll();
+            var products = await _mediator.Send(new GetAllProductsQuery());
 
             if (products == null || !products.Any())
                 return NotFound();
@@ -43,10 +45,7 @@ namespace cbtw_test.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var product = _mapper.Map<Product>(req);
-
-            await _uow.Products.Add(product);
-            await _uow.CompleteAsync();
+            var product = await _mediator.Send(new CreateProductCommand(req));
 
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
 
@@ -59,9 +58,7 @@ namespace cbtw_test.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var response = await _uow.Products.Delete(id);
-            await _uow.CompleteAsync();
-
+            var response = await _mediator.Send(new DeleteProductCommand(id));
             return response ? Ok() : NotFound();
 
         }
@@ -72,13 +69,10 @@ namespace cbtw_test.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var entity = _mapper.Map<Product>(req);
-
-            await _uow.Products.Update(entity);
-            await _uow.CompleteAsync();
+            var entity = await _mediator.Send(new UpdateProductCommand(req));
 
 
-            return NoContent();
+            return entity ? Ok() : NotFound();
         }
 
 
